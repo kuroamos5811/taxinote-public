@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>タクシー営業ノート 開発者向け仕様書</title>
+  <meta name="robots" content="noindex,nofollow">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d1d1f;
+      --muted: #5f6368;
+      --line: #d9dadd;
+      --paper: #fffdf7;
+      --panel: #ffffff;
+      --accent: #0b6f5c;
+      --accent-soft: #e5f3ef;
+      --warn: #8a5a00;
+      --warn-soft: #fff4d8;
+      --code: #f5f5f7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      line-height: 1.8;
+    }
+
+    header,
+    main {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      padding-top: 48px;
+      padding-bottom: 28px;
+    }
+
+    main {
+      padding-bottom: 72px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.18;
+      margin: 0 0 12px;
+    }
+
+    h2 {
+      border-top: 1px solid var(--line);
+      font-size: 1.6rem;
+      line-height: 1.35;
+      margin: 44px 0 16px;
+      padding-top: 28px;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      margin: 28px 0 8px;
+    }
+
+    p,
+    li,
+    th,
+    td {
+      font-size: 1rem;
+    }
+
+    a {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    code {
+      background: var(--code);
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      padding: 0.12em 0.34em;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 14px 0 24px;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f7f7f4;
+      font-weight: 700;
+    }
+
+    ul,
+    ol {
+      padding-left: 1.35rem;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.08rem;
+      max-width: 780px;
+    }
+
+    .meta {
+      color: var(--accent);
+      font-weight: 700;
+      margin: 0 0 8px;
+    }
+
+    .summary-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin: 28px 0 8px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .note {
+      background: var(--accent-soft);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+      margin: 20px 0;
+      padding: 14px 16px;
+    }
+
+    .warning {
+      background: var(--warn-soft);
+      border-left: 4px solid var(--warn);
+      border-radius: 6px;
+      margin: 20px 0;
+      padding: 14px 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      list-style: none;
+      margin: 12px 0 0;
+      padding: 0;
+    }
+
+    .tag-list li {
+      background: var(--accent-soft);
+      border-radius: 999px;
+      color: var(--accent);
+      font-weight: 700;
+      padding: 4px 10px;
+    }
+
+    body.locked header,
+    body.locked main {
+      display: none;
+    }
+
+    .gate {
+      align-items: center;
+      background: var(--paper);
+      display: none;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    body.locked .gate {
+      display: flex;
+    }
+
+    .gate-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin: 0 auto;
+      max-width: 420px;
+      padding: 28px;
+      width: 100%;
+    }
+
+    .gate-card h1 {
+      font-size: 1.55rem;
+      margin-bottom: 8px;
+    }
+
+    .gate-card label {
+      display: block;
+      font-weight: 700;
+      margin: 20px 0 8px;
+    }
+
+    .gate-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .gate-row input {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      flex: 1;
+      font-size: 1rem;
+      padding: 10px 12px;
+    }
+
+    .gate-row button {
+      background: var(--accent);
+      border: 0;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 10px 16px;
+    }
+
+    .gate-error {
+      color: #b3261e;
+      font-weight: 700;
+      min-height: 1.8em;
+    }
+  </style>
+</head>
+<body class="locked">
+  <section class="gate" aria-label="開発者向け仕様書の簡易確認">
+    <div class="gate-card">
+      <h1>開発者向け仕様書</h1>
+      <p class="lead">共有用の簡易確認です。指定されたパスワードを入力してください。</p>
+      <form id="gate-form">
+        <label for="gate-password">パスワード</label>
+        <div class="gate-row">
+          <input id="gate-password" type="password" inputmode="numeric" autocomplete="current-password" placeholder="0000">
+          <button type="submit">開く</button>
+        </div>
+        <p class="gate-error" id="gate-error" aria-live="polite"></p>
+      </form>
+      <noscript><p class="gate-error">JavaScriptを有効にしてください。</p></noscript>
+    </div>
+  </section>
+  <header>
+    <p class="meta">Last updated: 2026-06-06</p>
+    <h1>タクシー営業ノート 仕様書</h1>
+    <p class="lead">本書は、タクシー営業ノートの現行仕様を日本語で整理したものです。実装時の判断、TestFlight説明、App Store Connect入力、ユーザー向け説明文の土台として使います。</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>1. アプリの目的</h2>
+      <p>タクシー営業ノートは、個人のタクシードライバーが自分の営業結果を振り返り、給与の実質歩率と乗車傾向を確認するためのiPhoneアプリです。</p>
+      <p>会社の給与明細、税務書類、配車システム、会社公式レポートを置き換えるものではありません。あくまで本人が手元で営業データを見える化し、次の営業判断に役立てるための補助ツールです。</p>
+
+      <div class="summary-grid">
+        <div class="card">
+          <h3>対象ユーザー</h3>
+          <p>自分の売上、給与、乗車傾向を把握したい個人タクシードライバー。</p>
+        </div>
+        <div class="card">
+          <h3>初期対象端末</h3>
+          <p>Version 1はiPhoneを優先します。iPadやWeb管理画面は初期対象外です。</p>
+        </div>
+        <div class="card">
+          <h3>公開名</h3>
+          <p>アプリ名は <code>タクシー営業ノート</code>、Bundle IDは <code>com.uklab.taxinote</code> です。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>2. Version 1 の主要機能</h2>
+      <ul>
+        <li>日別売上の入力と保存</li>
+        <li>締日にもとづく月間売上の集計</li>
+        <li>給与額から実質歩率を確認する給与チェック</li>
+        <li>CSV日報の取り込み</li>
+        <li>乗車記録の手動補正</li>
+        <li>時間帯、曜日、祝日/休前日、乗車区分による乗車分析</li>
+        <li>主要エリア別の乗車回数と平均運賃の表示</li>
+        <li>MapKitによる主要エリアの地図表示</li>
+        <li>設定/ヘルプ画面とアプリ内プライバシーポリシー</li>
+        <li>合成サンプルデータの明示表示と削除</li>
+      </ul>
+
+      <div class="note">
+        <p>初期版はローカル優先です。保存した営業データをアプリ独自のサーバーへ送信する設計ではありません。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>3. 給与チェック仕様</h2>
+      <p>給与チェックは、会社ごとの複雑な給与式を再現する機能ではありません。実際に支払われた給与額を、税抜月間売上と比較して、実質的な歩率を見える化する機能です。</p>
+
+      <h3>入力項目</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>項目</th>
+            <th>内容</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>日別売上</td>
+            <td>税抜を標準入力とし、必要に応じて税込入力も選択できます。</td>
+          </tr>
+          <tr>
+            <td>締日</td>
+            <td>標準は15日締め。31を指定すると月末締めとして扱います。</td>
+          </tr>
+          <tr>
+            <td>税率</td>
+            <td>標準は10%。税込入力を税抜換算するために使います。</td>
+          </tr>
+          <tr>
+            <td>月間税抜売上</td>
+            <td>日別売上から自動計算します。会社固有の調整がある場合は手入力で上書きできます。</td>
+          </tr>
+          <tr>
+            <td>給与額</td>
+            <td>総支給、手取り、賞与込み、賞与抜きの4種類を任意で入力できます。</td>
+          </tr>
+          <tr>
+            <td>基準歩率</td>
+            <td>標準は60%。ユーザーが変更した値は次回以降も使います。</td>
+          </tr>
+          <tr>
+            <td>メモ</td>
+            <td>控除、手数料、賞与、特殊な調整などを記録できます。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>計算内容</h3>
+      <ul>
+        <li>実質歩率 = 入力した給与額 ÷ 月間税抜売上</li>
+        <li>基準給与 = 月間税抜売上 × 基準歩率</li>
+        <li>基準との差額 = 入力した給与額 - 基準給与</li>
+        <li>賞与額 = 賞与込み給与 - 賞与抜き給与</li>
+        <li>曜日別の平均税抜売上</li>
+      </ul>
+
+      <p>給与額はすべて任意入力です。入力された項目だけを計算し、未入力の項目は無理に評価しません。</p>
+    </section>
+
+    <section>
+      <h2>4. 日報取り込み仕様</h2>
+      <p>日報形式は会社やシステムによって変わるため、アプリ本体は特定の見た目や表位置に依存しません。取り込み処理は、最終的に安定した「乗車記録」へ変換する方針です。</p>
+
+      <h3>取り込み方針</h3>
+      <ol>
+        <li>CSV、画像、PDF、Excel、手入力などの入力元を読む。</li>
+        <li>日付、曜日、乗車時刻、乗車エリア、運賃、乗車区分を候補として検出する。</li>
+        <li>検出結果をアプリ共通の乗車記録に変換する。</li>
+        <li>信頼度が低い項目や不足項目は手動補正へ回す。</li>
+        <li>確認済みの記録だけを分析や地図表示に使う。</li>
+      </ol>
+
+      <h3>Version 1で扱う主な項目</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>項目</th>
+            <th>内容</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>日報日付</td>
+            <td>営業日として扱う日付。</td>
+          </tr>
+          <tr>
+            <td>曜日</td>
+            <td>月曜から日曜までの7値。</td>
+          </tr>
+          <tr>
+            <td>祝日/休前日</td>
+            <td>祝日、または需要が変わりやすい休前日として分析に使います。</td>
+          </tr>
+          <tr>
+            <td>乗車時刻</td>
+            <td>22時以降から翌朝5時までは深夜営業日として扱えるよう、内部では25時以降の表現も考慮します。</td>
+          </tr>
+          <tr>
+            <td>乗車エリア</td>
+            <td>日報上のエリア文字列を保持し、主要エリア辞書により分析用エリアへ変換します。</td>
+          </tr>
+          <tr>
+            <td>運賃</td>
+            <td>乗車ごとの金額。エリア別平均運賃の計算に使います。</td>
+          </tr>
+          <tr>
+            <td>乗車区分</td>
+            <td>アプリ配車、流し、無線/配車、不明などに正規化します。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="warning">
+        <p>日報に含まれる運転者名、会社識別子、車両番号などは分析用データとして保存・表示しません。個人や会社を直接識別しやすい情報はVersion 1の分析対象外です。</p>
+      </div>
+
+      <h3>重複取り込み</h3>
+      <p>同じ営業日のCSVを再取り込みした場合、既存件数と手動補正済み件数を表示して、意図しない上書きを防ぎます。現在は明示的に確認した場合のみ、既存日報を置き換える破壊的な置換フローを提供します。</p>
+      <p>今後の課題として、手動補正を行単位で保持したまま再取り込み内容とマージする非破壊的な更新方式を検討します。</p>
+    </section>
+
+    <section>
+      <h2>5. 乗車分析仕様</h2>
+      <p>乗車分析は、どの時間帯にどのエリアで乗車が発生しやすいか、またどのエリアの平均運賃が高いかを確認するための機能です。</p>
+
+      <h3>標準時間帯</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>表示</th>
+            <th>内部範囲</th>
+            <th>意味</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>5-8時</td>
+            <td>05:00-08:00</td>
+            <td>朝の移動開始。</td>
+          </tr>
+          <tr>
+            <td>8-12時</td>
+            <td>08:00-12:00</td>
+            <td>通勤、業務、昼前の移動。</td>
+          </tr>
+          <tr>
+            <td>12-16時</td>
+            <td>12:00-16:00</td>
+            <td>昼間の買い物、業務、移動。</td>
+          </tr>
+          <tr>
+            <td>16-22時</td>
+            <td>16:00-22:00</td>
+            <td>帰宅、夕食、深夜割増前の移動。</td>
+          </tr>
+          <tr>
+            <td>22-1時</td>
+            <td>22:00-25:00</td>
+            <td>深夜割増開始、終電前後、夜の需要。</td>
+          </tr>
+          <tr>
+            <td>1-5時</td>
+            <td>25:00-29:00</td>
+            <td>終電後から早朝までの深夜需要。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>アプリは現在時刻から標準時間帯を判定し、分析画面と地図画面の初期表示に使います。ユーザーは手動で時間帯を切り替えられます。</p>
+
+      <h3>フィルター</h3>
+      <ul class="tag-list">
+        <li>曜日</li>
+        <li>祝日</li>
+        <li>休前日</li>
+        <li>乗車区分</li>
+        <li>標準時間帯</li>
+      </ul>
+
+      <h3>表示する指標</h3>
+      <ul>
+        <li>乗車回数</li>
+        <li>合計運賃</li>
+        <li>平均運賃</li>
+        <li>主要エリア別の集計</li>
+        <li>地図上の主要エリアマーカー</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>6. エリア仕様</h2>
+      <p>初期版では、東京タクシー営業圏を想定した主要エリア辞書を使います。対象は東京23区、武蔵野市、三鷹市を中心とします。</p>
+      <p>エリアごとの対象区、検索キーワード、利用区分、レビュー注意点は <a href="../areas/">エリア仕様一覧</a> にまとめています。</p>
+
+      <h3>エリアの考え方</h3>
+      <ul>
+        <li>日報上の元エリア文字列は保持する。</li>
+        <li>表示・分析用に主要エリアグループへ変換する。</li>
+        <li>座標は近似値として扱い、将来ユーザー補正できるようにする。</li>
+        <li>珍しいエリアや未分類エリアは削除せず、<code>other_or_unmapped</code> として保持する。</li>
+      </ul>
+
+      <h3>無料/有料拡張の前提</h3>
+      <p>初期実装では課金機能そのものは作りません。ただし、将来の拡張に備えてエリア辞書はアクセス階層を持ちます。</p>
+      <ul>
+        <li>無料/基本範囲: 20エリア。P1グループと一部P2グループ。</li>
+        <li>有料/フル範囲: 46エリア。将来的にカスタムエリア編集も検討。</li>
+        <li>エリア番号ではなく <code>accessTier</code> で利用範囲を判定する。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. データ保存とプライバシー</h2>
+      <p>Version 1はSwiftDataによる端末内保存を前提とします。クラウド同期、アカウント機能、アプリ独自サーバーへの営業データ送信は現時点では実装しません。</p>
+
+      <h3>端末内に保存する可能性がある情報</h3>
+      <ul>
+        <li>日別売上</li>
+        <li>給与チェック用の入力値と基準歩率</li>
+        <li>日報から取り込んだ乗車時刻、乗車エリア、運賃、乗車区分</li>
+        <li>曜日、時間帯、エリア、地図表示のための集計値</li>
+        <li>手動補正済みかどうかの状態</li>
+      </ul>
+
+      <h3>保存・分析しない情報</h3>
+      <ul>
+        <li>運転者名</li>
+        <li>会社識別子</li>
+        <li>車両番号</li>
+        <li>会社公式レポートを再現するためだけの個人識別情報</li>
+      </ul>
+
+      <p>公開プライバシーポリシーは <a href="https://uk-lab.jp/taxinote/privacy-policy/">https://uk-lab.jp/taxinote/privacy-policy/</a>、サポートページは <a href="https://uk-lab.jp/taxinote/support/">https://uk-lab.jp/taxinote/support/</a> です。</p>
+    </section>
+
+    <section>
+      <h2>8. 現在の実装状態</h2>
+      <h3>実装済み</h3>
+      <ul>
+        <li>SwiftUI iPhoneアプリシェル</li>
+        <li>SwiftDataによる日報、乗車記録、給与チェック、日別売上、設定の保存</li>
+        <li>CSV取り込みと重複日付保護</li>
+        <li>乗車時刻、エリア、運賃、乗車区分の補正UI</li>
+        <li>給与チェック計算</li>
+        <li>日別売上入力と締日集計</li>
+        <li>主要エリア分析</li>
+        <li>MapKit地図表示</li>
+        <li>合成サンプルデータの明示と削除</li>
+        <li>設定/ヘルプとプライバシーポリシー画面</li>
+        <li>AppIcon、表示名、Bundle ID、プライバシーマニフェスト</li>
+        <li>公開プライバシーポリシーとサポートURL</li>
+      </ul>
+
+      <h3>未実装または次フェーズ</h3>
+      <ul>
+        <li>Vision OCRによる日報画像の読み取り</li>
+        <li>実日報画像からの乗車行検出</li>
+        <li>同一営業日の再取り込み時に手動補正を保持する非破壊マージ</li>
+        <li>実ドライバーによるエリア辞書と地図表示の検証</li>
+        <li>有料/無料機能の課金実装</li>
+        <li>クラウド同期やアカウント機能</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>9. TestFlight準備状態</h2>
+      <p>実装側のTestFlight準備はかなり進んでいます。現在の主な待ちはApple Developer Programの有効化と、その後の署名・App Store Connect設定です。</p>
+
+      <h3>準備済み</h3>
+      <ul>
+        <li>アプリ名: <code>タクシー営業ノート</code></li>
+        <li>Bundle ID候補: <code>com.uklab.taxinote</code></li>
+        <li>AppIcon設定</li>
+        <li>PrivacyInfo.xcprivacy</li>
+        <li>Privacy Policy URL</li>
+        <li>Support URL</li>
+        <li>TestFlight説明文、What to Test、審査メモの下書き</li>
+      </ul>
+
+      <h3>Apple側で残っている作業</h3>
+      <ol>
+        <li>Apple Developer Programの有効化を待つ。</li>
+        <li>Apple Developerで <code>com.uklab.taxinote</code> をExplicit App IDとして登録する。</li>
+        <li>XcodeのSigning Teamを設定する。</li>
+        <li>App Store Connectでアプリを作成する。</li>
+        <li>署名付きArchiveを作成してアップロードする。</li>
+        <li>TestFlightの内部テスターで実機確認する。</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>10. 初期版の対象外</h2>
+      <ul>
+        <li>乗客向けアプリ</li>
+        <li>配車予約</li>
+        <li>会社管理者向けダッシュボード</li>
+        <li>他ドライバーのリアルタイム位置追跡</li>
+        <li>決済処理</li>
+        <li>会社給与式の完全再現</li>
+        <li>税務書類や正式な給与明細の代替</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>11. 関連資料</h2>
+      <ul>
+        <li><code>docs/project-summary.md</code>: プロジェクト全体像</li>
+        <li><code>docs/requirements.md</code>: 要件定義</li>
+        <li><code>docs/data-model.md</code>: データモデル</li>
+        <li><code>docs/pay-calculation-model.md</code>: 給与チェック計算</li>
+        <li><code>docs/pickup-analysis-design.md</code>: 乗車分析設計</li>
+        <li><code>docs/area-specification-ja.html</code>: エリア仕様一覧</li>
+        <li><code>docs/testflight-rollout-plan.md</code>: TestFlight手順</li>
+        <li><code>docs/app-store-connect-checklist.md</code>: App Store Connect入力チェック</li>
+      </ul>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const accessKey = "taxinote-spec-access";
+      const unlock = () => {
+        document.body.classList.remove("locked");
+        sessionStorage.setItem(accessKey, "ok");
+      };
+
+      if (sessionStorage.getItem(accessKey) === "ok") {
+        unlock();
+        return;
+      }
+
+      const form = document.getElementById("gate-form");
+      const input = document.getElementById("gate-password");
+      const error = document.getElementById("gate-error");
+      input?.focus();
+      form?.addEventListener("submit", event => {
+        event.preventDefault();
+        if (input.value === "0000") {
+          unlock();
+        } else {
+          error.textContent = "パスワードが違います。";
+          input.select();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

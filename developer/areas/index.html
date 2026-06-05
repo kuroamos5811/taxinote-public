@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>タクシー営業ノート エリア仕様一覧</title>
+  <meta name="robots" content="noindex,nofollow">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d1d1f;
+      --muted: #5f6368;
+      --line: #d9dadd;
+      --paper: #fffdf7;
+      --panel: #ffffff;
+      --accent: #0b6f5c;
+      --accent-soft: #e5f3ef;
+      --code: #f5f5f7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      line-height: 1.75;
+    }
+
+    header,
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      padding-top: 48px;
+      padding-bottom: 24px;
+    }
+
+    main {
+      padding-bottom: 72px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.18;
+      margin: 0 0 12px;
+    }
+
+    h2 {
+      border-top: 1px solid var(--line);
+      font-size: 1.45rem;
+      margin: 40px 0 14px;
+      padding-top: 24px;
+    }
+
+    p,
+    li,
+    th,
+    td {
+      font-size: 1rem;
+    }
+
+    a {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    code {
+      background: var(--code);
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      padding: 0.12em 0.34em;
+    }
+
+    table {
+      border-collapse: collapse;
+      min-width: 1120px;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f7f7f4;
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.08rem;
+      max-width: 850px;
+    }
+
+    .meta {
+      color: var(--accent);
+      font-weight: 700;
+      margin: 0 0 8px;
+    }
+
+    .summary-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      margin: 24px 0;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .card strong {
+      display: block;
+      font-size: 1.45rem;
+    }
+
+    .note {
+      background: var(--accent-soft);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+      margin: 20px 0;
+      padding: 14px 16px;
+    }
+
+    .table-wrap {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="meta">Last updated: 2026-06-06</p>
+    <h1>タクシー営業ノート エリア仕様一覧</h1>
+    <p class="lead">乗車分析で使う東京主要エリア辞書の一覧です。実装が読み込む <code>tokyo_major_area_seed.json</code> を元に、表示名、対象区、無料/有料区分、検索キーワード、レビュー注意点を確認できるようにしています。</p>
+    <p><a href="../spec/">開発者向け仕様書に戻る</a></p>
+  </header>
+
+  <main>
+    <section>
+      <h2>集計概要</h2>
+      <div class="summary-grid">
+        <div class="card"><span>登録エリア</span><strong>46</strong></div>
+        <div class="card"><span>無料/基本</span><strong>20</strong></div>
+        <div class="card"><span>有料/フル</span><strong>26</strong></div>
+        <div class="card"><span>初期ランキング対象</span><strong>34</strong></div>
+      </div>
+      <div class="note">
+        <p>この一覧は初期レビュー用の辞書です。地理的な厳密な境界線ではなく、日報のエリア文字列を主要エリアに寄せるためのキーワード表として扱います。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>エリア一覧</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>表示名 / ID</th>
+              <th>対象区・市</th>
+              <th>初期ランキング</th>
+              <th>利用区分</th>
+              <th>優先度</th>
+              <th>需要タグ</th>
+              <th>住所キーワード</th>
+              <th>駅キーワード</th>
+              <th>レビュー注意点</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>1</td>
+            <td><strong>錦糸町・両国</strong><br><code>kinshicho_ryogoku</code></td>
+            <td>墨田区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>夜需要 / 駅 / 飲食 / 深夜割増</td>
+            <td>錦糸、江東橋、太平、両国、緑、横網</td>
+            <td>錦糸町駅、両国駅</td>
+            <td>錦糸町夜需要は主要エリア扱い。両国はイベント影響あり。</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><strong>銀座</strong><br><code>ginza</code></td>
+            <td>中央区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>買い物 / 飲食 / 夜需要 / 深夜割増</td>
+            <td>銀座、有楽町、日比谷、数寄屋橋、西銀座</td>
+            <td>銀座駅、東銀座駅、有楽町駅、日比谷駅</td>
+            <td>新橋寄りと日比谷寄りを銀座に含めるかは実走データで確認。</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><strong>恵比寿・広尾</strong><br><code>ebisu_hiroo</code></td>
+            <td>渋谷区 / 港区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>飲食 / 夜需要 / residential_high_income / 深夜割増</td>
+            <td>恵比寿、恵比寿南、恵比寿西、広尾</td>
+            <td>恵比寿駅、広尾駅</td>
+            <td>代官山・中目黒・白金との境界確認。</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><strong>原宿・表参道・青山</strong><br><code>harajuku_omotesando_aoyama</code></td>
+            <td>渋谷区 / 港区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>買い物 / 飲食 / fashion / オフィス</td>
+            <td>原宿、神宮前、表参道、南青山、北青山</td>
+            <td>原宿駅、明治神宮前駅、表参道駅、外苑前駅</td>
+            <td>渋谷・六本木・赤坂への流れを別で見る価値あり。</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><strong>五反田・大崎</strong><br><code>gotanda_osaki</code></td>
+            <td>品川区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>オフィス / 夜需要 / 駅 / 深夜割増</td>
+            <td>五反田、東五反田、西五反田、大崎、北品川</td>
+            <td>五反田駅、大崎駅</td>
+            <td>五反田夜需要は主要扱い。大崎はオフィス寄り。北品川は港南ではなく五反田・大崎側に寄せる仮説で開始。</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td><strong>渋谷</strong><br><code>shibuya</code></td>
+            <td>渋谷区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>夜需要 / 買い物 / 駅 / 深夜割増</td>
+            <td>渋谷、道玄坂、宇田川町、神南、桜丘町、円山町、神泉町、松濤</td>
+            <td>渋谷駅、神泉駅</td>
+            <td>初期例として最重要。円山町・神泉・松濤を含めるか要確認。</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td><strong>上野・御徒町・湯島</strong><br><code>ueno_okachimachi_yushima</code></td>
+            <td>台東区 / 文京区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>駅 / 飲食 / 夜需要 / 観光</td>
+            <td>上野、御徒町、湯島、池之端、東上野、上野公園</td>
+            <td>上野駅、御徒町駅、湯島駅、上野広小路駅</td>
+            <td>湯島の夜需要は上野とは別分析候補。</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td><strong>新橋・汐留</strong><br><code>shinbashi_shiodome</code></td>
+            <td>港区 / 中央区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>オフィス / 飲食 / 夜需要 / 深夜割増</td>
+            <td>新橋、汐留、東新橋、西新橋、内幸町</td>
+            <td>新橋駅、汐留駅、内幸町駅</td>
+            <td>銀座・虎ノ門・浜松町との境界を後で調整。</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td><strong>新宿・歌舞伎町</strong><br><code>shinjuku_kabukicho</code></td>
+            <td>新宿区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>夜需要 / 駅 / 買い物 / 深夜割増</td>
+            <td>新宿、歌舞伎町、新宿三丁目、新宿五丁目、大久保一丁目</td>
+            <td>新宿駅、新宿三丁目駅、西武新宿駅、東新宿駅</td>
+            <td>歌舞伎町と南口・三丁目を分けるかは要実走確認。</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td><strong>赤坂・溜池</strong><br><code>akasaka_tameike</code></td>
+            <td>港区 / 千代田区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>オフィス / 飲食 / 夜需要 / ホテル</td>
+            <td>赤坂、永田町、平河町、紀尾井町、溜池山王</td>
+            <td>赤坂駅、赤坂見附駅、溜池山王駅、永田町駅</td>
+            <td>赤坂見附・永田町はビジネス需要と夜需要が混ざる。</td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td><strong>池袋</strong><br><code>ikebukuro</code></td>
+            <td>豊島区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>駅 / 買い物 / 夜需要 / 深夜割増</td>
+            <td>池袋、東池袋、西池袋、南池袋、北池袋</td>
+            <td>池袋駅、東池袋駅</td>
+            <td>東口・西口を分けるかは後で検証。</td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td><strong>東京駅・丸の内・大手町</strong><br><code>tokyo_marunouchi_otemachi</code></td>
+            <td>千代田区 / 中央区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>オフィス / 駅 / ホテル / ビジネス</td>
+            <td>丸の内、大手町、八重洲、東京駅、日本橋口</td>
+            <td>東京駅、大手町駅、二重橋前駅</td>
+            <td>日本橋・京橋・有楽町との境界を実走で調整。</td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td><strong>白金・高輪</strong><br><code>shirokane_takanawa</code></td>
+            <td>港区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>ホテル / residential_high_income / 駅 / ビジネス</td>
+            <td>白金、白金台、高輪、高輪口、泉岳寺</td>
+            <td>白金台駅、白金高輪駅、高輪台駅、高輪ゲートウェイ駅、泉岳寺駅</td>
+            <td>旧品川・高輪を分割。品川駅の高輪口側、白金台・白金・高輪をまとめる。品川単独表記は曖昧なので実走データで確認。</td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td><strong>六本木</strong><br><code>roppongi</code></td>
+            <td>港区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>1</td>
+            <td>夜需要 / 飲食 / ホテル / 深夜割増</td>
+            <td>六本木、西麻布、元麻布、麻布台</td>
+            <td>六本木駅、乃木坂駅、六本木一丁目駅</td>
+            <td>西麻布を六本木扱いにするか、独立させるか要確認。</td>
+          </tr>
+          <tr>
+            <td>15</td>
+            <td><strong>蒲田</strong><br><code>kamata</code></td>
+            <td>大田区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>駅 / local_nightlife / airport_access</td>
+            <td>蒲田、西蒲田、東蒲田、京急蒲田</td>
+            <td>蒲田駅、京急蒲田駅</td>
+            <td>羽田・川崎方面の営業圏なら重要。</td>
+          </tr>
+          <tr>
+            <td>16</td>
+            <td><strong>吉祥寺</strong><br><code>kichijoji</code></td>
+            <td>武蔵野市</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>駅 / 買い物 / 飲食 / local_nightlife</td>
+            <td>吉祥寺、御殿山、井の頭</td>
+            <td>吉祥寺駅、井の頭公園駅</td>
+            <td>23区外だが東京西側の主要商業地として保持。</td>
+          </tr>
+          <tr>
+            <td>17</td>
+            <td><strong>虎ノ門・神谷町</strong><br><code>toranomon_kamiyacho</code></td>
+            <td>港区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>2</td>
+            <td>オフィス / ホテル / 飲食</td>
+            <td>虎ノ門、神谷町、愛宕、麻布台</td>
+            <td>虎ノ門駅、虎ノ門ヒルズ駅、神谷町駅</td>
+            <td>新橋・赤坂・六本木への流れを別途見たい。</td>
+          </tr>
+          <tr>
+            <td>18</td>
+            <td><strong>港南・天王洲</strong><br><code>konan_tennouzu</code></td>
+            <td>港区 / 品川区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>オフィス / waterfront / 駅 / ホテル</td>
+            <td>港南、東品川、天王洲、港南口</td>
+            <td>天王洲アイル駅、品川駅港南口</td>
+            <td>品川駅港南口、港南、東品川、天王洲を港南側として扱う。北品川は五反田・大崎側に残す。</td>
+          </tr>
+          <tr>
+            <td>19</td>
+            <td><strong>三軒茶屋・池尻</strong><br><code>sangenjaya_ikejiri</code></td>
+            <td>世田谷区 / 目黒区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>飲食 / 住宅 / local_nightlife</td>
+            <td>三軒茶屋、太子堂、池尻、若林、三宿</td>
+            <td>三軒茶屋駅、池尻大橋駅</td>
+            <td>渋谷からの流れと夜間帰宅需要を見る。</td>
+          </tr>
+          <tr>
+            <td>20</td>
+            <td><strong>秋葉原・神田</strong><br><code>akihabara_kanda</code></td>
+            <td>千代田区 / 台東区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>2</td>
+            <td>買い物 / オフィス / 飲食 / 駅</td>
+            <td>秋葉原、外神田、神田、岩本町、淡路町、須田町</td>
+            <td>秋葉原駅、神田駅、岩本町駅、淡路町駅</td>
+            <td>御茶ノ水・上野方面との境界確認。</td>
+          </tr>
+          <tr>
+            <td>21</td>
+            <td><strong>新大久保・大久保</strong><br><code>shin_okubo_okubo</code></td>
+            <td>新宿区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>飲食 / 夜需要 / local</td>
+            <td>大久保、百人町、新大久保、北新宿</td>
+            <td>新大久保駅、大久保駅</td>
+            <td>歌舞伎町側と一体で見るかは確認。</td>
+          </tr>
+          <tr>
+            <td>22</td>
+            <td><strong>神楽坂・飯田橋</strong><br><code>kagurazaka_iidabashi</code></td>
+            <td>新宿区 / 千代田区 / 文京区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>飲食 / オフィス / 駅</td>
+            <td>神楽坂、飯田橋、揚場町、津久戸町、富士見</td>
+            <td>飯田橋駅、神楽坂駅、牛込神楽坂駅</td>
+            <td>夜の飲食需要とオフィス帰宅需要が混ざる。</td>
+          </tr>
+          <tr>
+            <td>23</td>
+            <td><strong>西新宿</strong><br><code>nishi_shinjuku</code></td>
+            <td>新宿区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>オフィス / ホテル / 駅</td>
+            <td>西新宿、新宿中央公園、都庁</td>
+            <td>都庁前駅、西新宿駅、新宿駅</td>
+            <td>新宿夜需要とは性格が違うため別グループ候補。</td>
+          </tr>
+          <tr>
+            <td>24</td>
+            <td><strong>赤羽・王子</strong><br><code>akabane_oji</code></td>
+            <td>北区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>駅 / local_nightlife / 住宅</td>
+            <td>赤羽、赤羽西、赤羽南、王子、東十条、十条</td>
+            <td>赤羽駅、王子駅、東十条駅、十条駅</td>
+            <td>北区側の実用主要エリア。東十条はサンプル由来。</td>
+          </tr>
+          <tr>
+            <td>25</td>
+            <td><strong>浅草</strong><br><code>asakusa</code></td>
+            <td>台東区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>2</td>
+            <td>観光 / 飲食 / ホテル</td>
+            <td>浅草、雷門、花川戸、西浅草、寿、駒形</td>
+            <td>浅草駅、田原町駅、蔵前駅</td>
+            <td>観光・ホテル需要中心。深夜は上野・錦糸町と比較。</td>
+          </tr>
+          <tr>
+            <td>26</td>
+            <td><strong>代官山・中目黒</strong><br><code>daikanyama_nakameguro</code></td>
+            <td>渋谷区 / 目黒区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>飲食 / 夜需要 / residential_high_income</td>
+            <td>代官山、猿楽町、青葉台、中目黒、上目黒、東山</td>
+            <td>代官山駅、中目黒駅、池尻大橋駅</td>
+            <td>恵比寿と一体化するか、独立させるか検証。</td>
+          </tr>
+          <tr>
+            <td>27</td>
+            <td><strong>築地・月島・勝どき</strong><br><code>tsukiji_tsukishima_kachidoki</code></td>
+            <td>中央区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>飲食 / 住宅 / waterfront</td>
+            <td>築地、月島、勝どき、晴海、佃、豊海</td>
+            <td>築地駅、月島駅、勝どき駅、晴海</td>
+            <td>晴海・勝どきは湾岸居住地として別扱い候補。</td>
+          </tr>
+          <tr>
+            <td>28</td>
+            <td><strong>中野</strong><br><code>nakano</code></td>
+            <td>中野区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>駅 / 飲食 / local_nightlife</td>
+            <td>中野、中野五丁目、中野三丁目、新井</td>
+            <td>中野駅</td>
+            <td>新宿帰り・中央線沿線需要を確認。</td>
+          </tr>
+          <tr>
+            <td>29</td>
+            <td><strong>日本橋・京橋</strong><br><code>nihonbashi_kyobashi</code></td>
+            <td>中央区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>2</td>
+            <td>オフィス / 買い物 / ビジネス</td>
+            <td>日本橋、京橋、八重洲、室町、本町、兜町</td>
+            <td>日本橋駅、京橋駅、三越前駅、茅場町駅</td>
+            <td>人形町・茅場町とまとめるかはデータ量次第。</td>
+          </tr>
+          <tr>
+            <td>30</td>
+            <td><strong>浜松町・田町</strong><br><code>hamamatsucho_tamachi</code></td>
+            <td>港区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>2</td>
+            <td>オフィス / 駅 / ホテル</td>
+            <td>浜松町、芝公園、芝、芝浦、海岸、田町、三田</td>
+            <td>浜松町駅、大門駅、田町駅、三田駅</td>
+            <td>芝浦は夜間・湾岸方面の別枠化候補。</td>
+          </tr>
+          <tr>
+            <td>31</td>
+            <td><strong>豊洲・有明・お台場</strong><br><code>toyosu_ariake_odaiba</code></td>
+            <td>江東区 / 港区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>waterfront / イベント / 買い物 / ホテル</td>
+            <td>豊洲、有明、台場、青海、東雲</td>
+            <td>豊洲駅、有明駅、国際展示場駅、台場駅、お台場海浜公園駅</td>
+            <td>イベント日と通常日で大きく変わるため将来eventTag向き。</td>
+          </tr>
+          <tr>
+            <td>32</td>
+            <td><strong>北千住</strong><br><code>kitasenju</code></td>
+            <td>足立区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>駅 / local_nightlife / 住宅</td>
+            <td>北千住、千住、千住旭町、千住仲町</td>
+            <td>北千住駅</td>
+            <td>城東・埼玉方面の玄関口として保持。</td>
+          </tr>
+          <tr>
+            <td>33</td>
+            <td><strong>麻布十番</strong><br><code>azabu_juban</code></td>
+            <td>港区</td>
+            <td>表示する</td>
+            <td>無料/基本</td>
+            <td>2</td>
+            <td>residential_high_income / 飲食 / 夜需要</td>
+            <td>麻布十番、南麻布、東麻布、三田一丁目</td>
+            <td>麻布十番駅、赤羽橋駅</td>
+            <td>六本木・白金・田町との境界を確認。</td>
+          </tr>
+          <tr>
+            <td>34</td>
+            <td><strong>目黒</strong><br><code>meguro</code></td>
+            <td>品川区 / 目黒区</td>
+            <td>表示する</td>
+            <td>有料/フル</td>
+            <td>2</td>
+            <td>駅 / 飲食 / residential_high_income</td>
+            <td>目黒、上大崎、下目黒</td>
+            <td>目黒駅</td>
+            <td>恵比寿・五反田との境界を確認。</td>
+          </tr>
+          <tr>
+            <td>35</td>
+            <td><strong>押上・スカイツリー</strong><br><code>oshiage_skytree</code></td>
+            <td>墨田区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>観光 / 買い物</td>
+            <td>押上、業平、向島、吾妻橋</td>
+            <td>押上駅、とうきょうスカイツリー駅、本所吾妻橋駅</td>
+            <td>観光寄り。主要ランキングに入れるかは実績次第。</td>
+          </tr>
+          <tr>
+            <td>36</td>
+            <td><strong>下北沢</strong><br><code>shimokitazawa</code></td>
+            <td>世田谷区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>飲食 / local_nightlife / 駅</td>
+            <td>下北沢、北沢、代沢、代田</td>
+            <td>下北沢駅、世田谷代田駅</td>
+            <td>主要化するかは利用者の営業圏次第。</td>
+          </tr>
+          <tr>
+            <td>37</td>
+            <td><strong>亀戸</strong><br><code>kameido</code></td>
+            <td>江東区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>駅 / local_nightlife / 住宅</td>
+            <td>亀戸、大島、西大島</td>
+            <td>亀戸駅、西大島駅、大島駅</td>
+            <td>錦糸町の補助エリアとして開始。</td>
+          </tr>
+          <tr>
+            <td>38</td>
+            <td><strong>高円寺・阿佐ヶ谷</strong><br><code>koenji_asagaya</code></td>
+            <td>杉並区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>local_nightlife / 駅 / 住宅</td>
+            <td>高円寺、阿佐谷、阿佐ヶ谷、梅里</td>
+            <td>高円寺駅、阿佐ヶ谷駅、新高円寺駅</td>
+            <td>レア扱い開始。件数が増えれば主要化。</td>
+          </tr>
+          <tr>
+            <td>39</td>
+            <td><strong>高田馬場</strong><br><code>takadanobaba</code></td>
+            <td>新宿区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>駅 / student / 飲食</td>
+            <td>高田馬場、西早稲田、下落合</td>
+            <td>高田馬場駅、西早稲田駅</td>
+            <td>主要扱いするかは乗車件数次第。</td>
+          </tr>
+          <tr>
+            <td>40</td>
+            <td><strong>四谷・市ヶ谷</strong><br><code>yotsuya_ichigaya</code></td>
+            <td>新宿区 / 千代田区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>オフィス / 駅 / 飲食</td>
+            <td>四谷、四谷三栄町、市谷、麹町、番町</td>
+            <td>四ツ谷駅、市ヶ谷駅、麹町駅</td>
+            <td>赤坂・飯田橋・新宿の間として扱いが難しい。</td>
+          </tr>
+          <tr>
+            <td>41</td>
+            <td><strong>自由が丘</strong><br><code>jiyugaoka</code></td>
+            <td>目黒区 / 世田谷区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>買い物 / 飲食 / residential_high_income</td>
+            <td>自由が丘、奥沢、緑が丘</td>
+            <td>自由が丘駅、奥沢駅</td>
+            <td>夜より昼夕の買い物・住宅需要寄り。</td>
+          </tr>
+          <tr>
+            <td>42</td>
+            <td><strong>人形町・茅場町</strong><br><code>ningyocho_kayabacho</code></td>
+            <td>中央区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>オフィス / 飲食 / local</td>
+            <td>人形町、茅場町、蛎殻町、小網町、日本橋浜町、水天宮</td>
+            <td>人形町駅、水天宮前駅、茅場町駅、浜町駅</td>
+            <td>主要表示では日本橋側に吸収するかも。</td>
+          </tr>
+          <tr>
+            <td>43</td>
+            <td><strong>代々木・千駄ヶ谷</strong><br><code>yoyogi_sendagaya</code></td>
+            <td>渋谷区 / 新宿区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>駅 / イベント / オフィス</td>
+            <td>代々木、千駄ヶ谷、北参道、南新宿</td>
+            <td>代々木駅、千駄ヶ谷駅、北参道駅</td>
+            <td>新宿・原宿の中間。イベント時は別扱い候補。</td>
+          </tr>
+          <tr>
+            <td>44</td>
+            <td><strong>大井町</strong><br><code>oimachi</code></td>
+            <td>品川区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>駅 / local / 住宅</td>
+            <td>大井、大井町、東大井、南品川</td>
+            <td>大井町駅、青物横丁駅</td>
+            <td>品川・羽田方面との中継需要を確認。</td>
+          </tr>
+          <tr>
+            <td>45</td>
+            <td><strong>大塚・巣鴨・駒込</strong><br><code>otsuka_sugamo_komagome</code></td>
+            <td>豊島区 / 文京区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>駅 / local / 飲食</td>
+            <td>大塚、北大塚、南大塚、巣鴨、駒込</td>
+            <td>大塚駅、巣鴨駅、駒込駅</td>
+            <td>池袋周辺の補助エリアとして保持。</td>
+          </tr>
+          <tr>
+            <td>46</td>
+            <td><strong>二子玉川</strong><br><code>futako_tamagawa</code></td>
+            <td>世田谷区</td>
+            <td>その他扱い</td>
+            <td>有料/フル</td>
+            <td>3</td>
+            <td>買い物 / residential_high_income</td>
+            <td>二子玉川、玉川、瀬田</td>
+            <td>二子玉川駅</td>
+            <td>郊外寄り。営業圏により主要化。</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">優先度はキーワード衝突時の判定に使う想定です。実走データでズレが見つかった場合は、キーワードやレビュー注意点を更新します。</p>
+    </section>
+  </main>
+</body>
+</html>
